@@ -1,0 +1,36 @@
+import requests
+from geopy.geocoders import Nominatim
+
+def ip_lookup(ip_address):
+    try:
+        # Fetch IP details
+        response = requests.get(f"http://ip-api.com/json/{ip_address}")
+        data = response.json()
+        
+        if data['status'] == 'success':
+            lat = data['lat']
+            lon = data['lon']
+            print(f"IP Address: {data['query']}")
+            print(f"Country: {data['country']}")
+            print(f"Region: {data['regionName']}")
+            print(f"City: {data['city']}")
+            print(f"ISP: {data['isp']}")
+            print(f"Latitude: {lat}")
+            print(f"Longitude: {lon}")
+
+            # Get location details from latitude and longitude
+            geolocator = Nominatim(user_agent="ip_lookup_tool")
+            location = geolocator.reverse((lat, lon), exactly_one=True)
+            if location:
+                print(f"Pinpoint Location: {location.address}")
+            else:
+                print("Pinpoint Location: Not available")
+        else:
+            print("IP lookup failed. Please check the IP address.")
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Example usage
+ip_address = "8.8.8.8"  # Replace with the IP address you want to look up
+ip_lookup(ip_address)
